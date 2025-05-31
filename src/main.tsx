@@ -1,10 +1,9 @@
-import { StrictMode } from 'react'
-import { createRoot } from 'react-dom/client'
-import './index.css'
-import App from './App.tsx'
+const promise = import('./preload').then(module => module.promise)
 
-createRoot(document.getElementById('root')!).render(
-  <StrictMode>
-    <App />
-  </StrictMode>,
-)
+const preloader = {
+  getLongLatencyAPI: () => promise
+}
+
+import('./App').then(module => {
+  module.renderApp(preloader)
+})
