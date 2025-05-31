@@ -1,15 +1,15 @@
-import { useEffect, useState } from 'react'
+import { StrictMode, useEffect, useState } from 'react'
 import './App.css'
 import BigComponent500KB from './BigComponent500KB'
-import { getLongLatencyAPI } from './api'
+import { createRoot } from 'react-dom/client'
 
 const time = Date.now()
 
-function App() {
+function App({ preloader }: { preloader: Preloader }) {
   const [message, setMessage] = useState<string | null>('loading...')
 
   useEffect(() => {
-    getLongLatencyAPI().then((message) => {
+    preloader.getLongLatencyAPI().then((message) => {
       setMessage(`${message} - ${Date.now() - time}ms`)
     })
   }, [])
@@ -22,4 +22,14 @@ function App() {
   )
 }
 
-export default App
+interface Preloader {
+  getLongLatencyAPI: () => Promise<string>
+}
+
+export const renderApp = (preloader: Preloader) => {
+  createRoot(document.getElementById('root')!).render(
+    <StrictMode>
+      <App preloader={preloader} />
+    </StrictMode>,
+  )
+}
